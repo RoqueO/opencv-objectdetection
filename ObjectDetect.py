@@ -15,7 +15,7 @@ while cap.isOpened():
         ret, frame = cap.read()
         if ret:
             # Apply background subtraction
-            fg_mask = backSub.apply(frame)
+            fg_mask = backSub.apply(frame, fgmask=None, learningRate=0.2)
 
             # apply global threshold to remove shadows
             retval, mask_thresh = cv2.threshold( fg_mask, 150, 255, cv2.THRESH_BINARY)
@@ -40,7 +40,9 @@ while cap.isOpened():
                 frame_out = cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 200), 3)
  
             # Display the resulting frame
-            cv2.imshow('Preview', fg_mask)
+            cv2.imshow('Preview', frame_out)
+            cv2.imshow('Background', fg_mask)
+            cv2.imshow('Eroded', mask_eroded)
             if cv2.waitKey(25) & 0xFF == ord('q'): 
                 break
 
