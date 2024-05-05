@@ -34,19 +34,18 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">Cat-Detect</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    A dual purpose project to give me some familiary with concepts of OpenCV and also create a cat tracker for training purposes.
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/RoqueO/opencv-objectdetection/issues/new?assignees=&labels=bug&projects=&template=bug-report---.md">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/RoqueO/opencv-objectdetection/issues/new?assignees=&labels=enhancement&projects=&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
@@ -85,16 +84,24 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
+This project will combine different ways to track objects with OpenCV.  This should provide me with the familiarity I need to have a basic understanding of object detection as well as tracking within OpenCV. 
 
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should implement DRY principles to the rest of your life :smile:
+In the future I'd like to be able to create an embedded device that utilizes what is learned here to further enhance my knowledge, but that'll come up in the future.
 
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
+### Classical method
 
-Use the `BLANK_README.md` to get started.
+```mermaid
+graph LR;
+    VideoStream-->BackgroundSubtractorMOG2;
+    BackgroundSubtractorMOG2-->Processing;
+    Processing-->Display;
+```
+
+The live stream is captured directly from the camera and the background subtractor continuously updates what it thinks is the background.  
+
+This is important since real video has pixel error as well as slight changes throughout the day.  Items like shadows, lens flare and slight movement in the camera could cause processing to fail if the background model was static.  OpenCV allows for some tuning to this algorithm depending on if you expect the image to change often or rarely.
+
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -102,16 +109,8 @@ Use the `BLANK_README.md` to get started.
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+* Python
+* OpenCV
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -126,9 +125,9 @@ To get a local copy up and running follow these simple example steps.
 ### Prerequisites
 
 This is an example of how to list things you need to use the software and how to install them.
-* npm
+* Dependencies
   ```sh
-  npm install npm@latest -g
+  pip3 install requirements.txt
   ```
 
 ### Installation
@@ -167,15 +166,13 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
+- [x] Add project template
+- [ ] Complete documentation for the standard method of object detection
+- [ ] Write and document HAAS filter for cat detection
+- [ ] Identify a AI method to try for cat detection that includes training and using a model
+- [ ] Write an document AI method
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/RoqueO/opencv-objectdetection/issuesd) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -211,9 +208,9 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Roque Obusan - [website](roque.obusan.me) - roque@obusan.com
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/RoqueO/opencv-objectdetection](https://github.com/RoqueO/opencv-objectdetection)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
