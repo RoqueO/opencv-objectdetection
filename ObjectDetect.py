@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-def createwindows(window_names: list, width=1366, height=768):
-    for i, window_name in enumerate(window_names):``
+def createwindows(window_names: list, width=400, height=300):
+    for i, window_name in enumerate(window_names):
         cv2.namedWindow(window_name)
         x = i % 2 * width
         y = i // 2 * height
@@ -25,7 +25,7 @@ if __name__ == "__main__":
             ret, frame = cap.read()
             if ret:
                 # Apply background subtraction
-                fg_mask = backSub.apply(frame, fgmask=None, learningRate=0.2)
+                fg_mask = backSub.apply(frame, fgmask=None)
 
                 # apply global threshold to remove shadows
                 retval, mask_thresh = cv2.threshold( fg_mask, 150, 255, cv2.THRESH_BINARY)
