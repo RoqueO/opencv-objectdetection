@@ -1,16 +1,21 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from screeninfo import get_monitors
 
 def createwindows(window_names: list, width=400, height=300):
     for i, window_name in enumerate(window_names):
-        cv2.namedWindow(window_name)
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
         x = i % 2 * width
         y = i // 2 * height
         cv2.moveWindow(window_name, x, y)
+        #cv2.resizeWindow(window_name, width, height)
 
 if __name__ == "__main__":
-    deviceID = 0;           # 0 = open default camera
+    monitor = get_monitors()[0]
+    window_size = (monitor.width // 2, monitor.height // 2)
+
+    deviceID = 1;           # 0 = open default camera
     apiID = cv2.CAP_ANY;    # 0 = autodetect default API
 
     cap = cv2.VideoCapture(deviceID, apiID)
@@ -18,7 +23,7 @@ if __name__ == "__main__":
     if not cap.isOpened():
         print("Error opening video file")
 
-    createwindows(window_names=['Subtractor', 'Eroded', 'Processed'])
+    createwindows(window_names=['Subtractor', 'Eroded', 'Processed'], width=window_size[0], height=window_size[1])
 
     while cap.isOpened():
         # Capture frame-by-frame
@@ -50,9 +55,9 @@ if __name__ == "__main__":
                     frame_out = cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 200), 3)
     
                 # Display the resulting frame
-                cv2.imshow('Processed', frame_out)
-                cv2.imshow('Subtractor', fg_mask)
-                cv2.imshow('Eroded', mask_eroded)
+                cv2.imshow('Processed', cv2.resize(frame_out, window_size))
+                cv2.imshow('Subtractor', cv2.resize(fg_mask, window_size))
+                cv2.imshow('Eroded', cv2.resize(mask_eroded, window_size))
                 if cv2.waitKey(25) & 0xFF == ord('q'): 
                     break
 
