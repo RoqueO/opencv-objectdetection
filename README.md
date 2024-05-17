@@ -82,7 +82,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-![Product Name Screen Shot](demo-classic)
+![Demo classical method](images/classical-demo.gif)
 
 This project will combine different ways to track objects with OpenCV.  This should provide me with the familiarity I need to have a basic understanding of object detection as well as tracking within OpenCV. 
 
