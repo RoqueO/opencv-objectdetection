@@ -176,8 +176,6 @@ See the [open issues](https://github.com/RoqueO/opencv-objectdetection/issuesd) 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- CONTRIBUTING -->
 ## Contributing
 
