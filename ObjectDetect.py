@@ -6,6 +6,7 @@ import math
 from methods import classical
 from screeninfo import get_monitors
 from ultralytics import YOLO
+from collections import defaultdict
 
 track_history = defaultdict(lambda: [])
 
@@ -117,8 +118,8 @@ def runyolov8(cap):
 
         # coordinates
         for r in results:
-            for box in boxes:
-                if box.cls[0] == 15:
+            for box in r.boxes:
+                if box.cls[0] != 15:
                     # bounding box
                     x1, y1, x2, y2 = box.xyxy[0]
                     x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2) # convert to int values
@@ -131,7 +132,7 @@ def runyolov8(cap):
 
                     # tracking
                     x, y, w, h = box.xywh[0]
-                    track = track_history[track_id]
+                    track = track_history[box.id.int().cpu().tolist()[0]]
                     track.append((float(x), float(y)))
                     if len(track) > 30:
                         track.pop(0)
@@ -164,7 +165,7 @@ if __name__ == "__main__":
     apiID = cv2.CAP_ANY;    # 0 = autodetect default API
 
     cap = cv2.VideoCapture(deviceID, apiID)
-    runclassicalmethod(cap)
+    #runclassicalmethod(cap)
     #runhaasdetection(cap)
     #runyolov5(cap)
     runyolov8(cap)
