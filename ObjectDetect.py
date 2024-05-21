@@ -3,8 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 import math
+from methods import classical
 from screeninfo import get_monitors
 from ultralytics import YOLO
+
+track_history = defaultdict(lambda: [])
 
 def createwindows(window_names: list, width=400, height=300):
     for i, window_name in enumerate(window_names):
@@ -13,56 +16,6 @@ def createwindows(window_names: list, width=400, height=300):
         y = i // 2 * height
         cv2.moveWindow(window_name, x, y)
         #cv2.resizeWindow(window_name, width, height)
-
-def runclassicalmethod(capture):
-    backSub = cv2.createBackgroundSubtractorMOG2()
-    if not cap.isOpened():
-        print("Error opening video file")
-
-    createwindows(window_names=['Subtractor', 'Eroded', 'Processed'], width=window_size[0], height=window_size[1])
-
-    while cap.isOpened():
-        # Capture frame-by-frame
-        ret, frame = cap.read()
-        if ret:
-            # Apply background subtraction
-            fg_mask = backSub.apply(frame, fgmask=None)
-
-            # apply global threshold to remove shadows
-            retval, mask_thresh = cv2.threshold( fg_mask, 150, 255, cv2.THRESH_BINARY)
-
-            # set the kernal
-            kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (20, 20))
-            # Apply erosion
-            mask_eroded = cv2.morphologyEx(mask_thresh, cv2.MORPH_OPEN, kernel)
-
-            # Find contours
-            contours, hierarchy = cv2.findContours(mask_eroded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            # print(contours)
-            #frame_ct = cv2.drawContours(frame, contours, -1, (0, 255, 0), 2)
-
-            min_contour_area = 1000  # Define your minimum area threshold
-            large_contours = [cnt for cnt in contours if cv2.contourArea(cnt) > min_contour_area]
-
-            # Draw bounding boxes
-            frame_out = frame.copy()
-            for cnt in large_contours:
-                x, y, w, h = cv2.boundingRect(cnt)
-                frame_out = cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 200), 3)
-
-            # Display the resulting frame
-            cv2.imshow('Processed', cv2.resize(frame_out, window_size))
-            cv2.imshow('Subtractor', cv2.resize(fg_mask, window_size))
-            cv2.imshow('Eroded', cv2.resize(mask_eroded, window_size))
-            if cv2.waitKey(25) & 0xFF == ord('q'): 
-                break
-
-    # When everything done, release 
-    # the video capture object 
-    cap.release() 
-    
-    # Closes all the frames 
-    cv2.destroyAllWindows() 
 
 def runhaasdetection(cap):
     # Load the cascade
@@ -154,11 +107,16 @@ def runyolov8(cap):
         success, img = cap.read()
         results = model.track(img, persist=True)
 
-        annotated_frame = results[0].plot()
+        # Get the boxes and track ids
+        #boxes_xyxy = results[0].boxes.xyxy.cpu()
+        #boxes_xywh = results[0].boxes.xywh.cpu()
+        #track_ids = results[0].boxes.id.int().cpu().tolist()
+
+        # Visualize the results on the frame
+        # annotated_frame = results[0].plot()
+
         # coordinates
         for r in results:
-            boxes = r.boxes
-
             for box in boxes:
                 if box.cls[0] == 15:
                     # bounding box
@@ -170,11 +128,17 @@ def runyolov8(cap):
 
                     # confidence
                     confidence = math.ceil((box.conf[0]*100))/100
-                    #print("Confidence --->",confidence)
 
-                    # class name
-                    #cls = int(box.cls[0])
-                    #print("Class name -->", classNames[cls])
+                    # tracking
+                    x, y, w, h = box.xywh[0]
+                    track = track_history[track_id]
+                    track.append((float(x), float(y)))
+                    if len(track) > 30:
+                        track.pop(0)
+
+                    # Draw the tracking line
+                    points = np.hstack(track).astype(np.int32).reshape((-1, 1, 2))
+                    cv2.polylines(img, [points], isClosed=False, color=(230, 230, 230), thickness=10)
 
                     # object details
                     org = [x1, y1]
@@ -185,7 +149,7 @@ def runyolov8(cap):
 
                     cv2.putText(img, 'Cat - {confidence}'.format(confidence=confidence), org, font, fontScale, color, thickness)
 
-        cv2.imshow('Webcam', annotated_frame)
+        cv2.imshow('Webcam', img)
         if cv2.waitKey(1) == ord('q'):
             break
 
@@ -200,7 +164,7 @@ if __name__ == "__main__":
     apiID = cv2.CAP_ANY;    # 0 = autodetect default API
 
     cap = cv2.VideoCapture(deviceID, apiID)
-    #runclassicalmethod(cap)
+    runclassicalmethod(cap)
     #runhaasdetection(cap)
     #runyolov5(cap)
     runyolov8(cap)
